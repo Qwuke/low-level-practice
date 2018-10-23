@@ -1,0 +1,710 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Esche.rs</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="A book accompanying a workshop to recreate Escher's square limit.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <base href="">
+
+        <link rel="stylesheet" href="book.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <link rel="shortcut icon" href="favicon.png">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme -->
+        
+        <link rel="stylesheet" href="geometry.css">
+        
+
+        
+        <!-- MathJax -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        
+
+        <!-- Fetch Clipboard.js from CDN but have a local fallback -->
+        <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.1/clipboard.min.js"></script>
+        <script>
+            if (typeof Clipboard == 'undefined') {
+                document.write(unescape("%3Cscript src='clipboard.min.js'%3E%3C/script%3E"));
+            }
+        </script>
+
+    </head>
+    <body class="light">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme;
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            document.querySelector('html').classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li class="affix"><a href="title.html">Title</a></li><li class="affix"><a href="motivation.html">Motivation</a></li><li class="affix"><a href="documentation.html">Documentation</a></li><li class="affix"><a href="grid.html">Grid method</a></li><li class="affix"><a href="box.html">Box</a></li><li class="affix"><a href="start.html">The letter d</a></li><li><a href="turn.html"><strong aria-hidden="true">1.</strong> turn</a></li><li><a href="flip.html"><strong aria-hidden="true">2.</strong> flip</a></li><li><a href="picture.html"><strong aria-hidden="true">3.</strong> Picture</a></li><li><a href="toss.html"><strong aria-hidden="true">4.</strong> toss</a></li><li><a href="above.html"><strong aria-hidden="true">5.</strong> above</a></li><li><a href="beside.html"><strong aria-hidden="true">6.</strong> beside</a></li><li><a href="quartet.html"><strong aria-hidden="true">7.</strong> quartet</a></li><li><a href="nonet.html"><strong aria-hidden="true">8.</strong> nonet</a></li><li><a href="over.html"><strong aria-hidden="true">9.</strong> over</a></li><li><a href="owl.html"><strong aria-hidden="true">10.</strong> owl</a></li><li><a href="ttile.html"><strong aria-hidden="true">11.</strong> ttile</a></li><li><a href="utile.html"><strong aria-hidden="true">12.</strong> utile</a></li><li><a href="side.html"><strong aria-hidden="true">13.</strong> side</a></li><li><a href="corner.html"><strong aria-hidden="true">14.</strong> corner</a></li><li><a href="square_limit.html"><strong aria-hidden="true">15.</strong> square_limit</a></li><li><a href="farewell.html"><strong aria-hidden="true">16.</strong> Farewell</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="submenu">
+                                <li><button class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li><button class="theme" id="rust">Rust</button></li>
+                                <li><button class="theme" id="coal">Coal</button></li>
+                                <li><button class="theme" id="navy">Navy</button></li>
+                                <li><button class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                        </div>
+
+                        <h1 class="menu-title">Esche.rs</h1>
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="print.html#eschers" id="eschers"><h1>Esche.rs</h1></a>
+<a class="header" href="print.html#exploring-functional-geometry" id="exploring-functional-geometry"><h2>Exploring functional geometry</h2></a>
+<p><img src="https://uploads3.wikiart.org/images/m-c-escher/square-limit.jpg!Large.jpg" alt="Square Limit, Escher 1964" /></p>
+<a class="header" href="print.html#motivation" id="motivation"><h1>Motivation</h1></a>
+<p>It was the year 1982 when
+<a href="https://www.ecs.soton.ac.uk/people/peter">Peter Henderson</a>, publishes a paper
+called <em>Functional Geometry</em>. In it he describes an algebra of pictures that
+allowed him to recreate <a href="https://en.wikipedia.org/wiki/M._C._Escher">Escher's</a>
+<em>Square Limit</em>.</p>
+<p><img src="https://uploads3.wikiart.org/images/m-c-escher/square-limit.jpg!Large.jpg" alt="Square Limit, Escher 1964" /></p>
+<p>The 2002 reprint of <a href="https://eprints.soton.ac.uk/257577/1/funcgeo2.pdf">the article</a>
+inspired <a href="https://einarwh.wordpress.com/">Einar Host</a> to give a
+<a href="https://einarwh.wordpress.com/2017/07/22/picture-combinators-and-recursive-fish/">talk</a>
+and a <a href="https://github.com/einarwh/escher-workshop">workshop</a>.</p>
+<p>I was lucky enough to attend that workshop at
+<a href="https://2018.boosterconf.no/">Booster Conf</a>. I had such a good time that I
+translated the workshop to Rust.</p>
+<p>I hope that you enjoy it as much as I did, when I first learned how to recreate
+Escher's Square Limit in code.</p>
+<a class="header" href="print.html#documentation" id="documentation"><h1>Documentation</h1></a>
+<p>In this workshop you are given starter code. A lot of the starter code can be treated as a black box. You should need to now the implementation.</p>
+<p>But it could well be that you want to look up the API. For that there is <a href="./doc/eschers/index.html">documentation</a>.</p>
+<a class="header" href="print.html#grid-method" id="grid-method"><h1>Grid method</h1></a>
+<p>During the workshop we will be relying on a technique well know to painters. It
+is called the <a href="https://www.art-is-fun.com/grid-method"><em>grid method</em></a>.</p>
+<p>Let's explain this method with our t<strong>Rust</strong>ed logo.</p>
+<p><img src="image/rust-logo-blk.svg" alt="The Rust logo" width="400px" height="400px"></p>
+<p>The first thing we do to our logo is overlay a grid.</p>
+<p><img src="image/grid-logo.svg" alt="A grid over the Rust logo" width="400px" height="400px"></p>
+<p>Next we draw a second grid, similar to the first.</p>
+<div class="reference">
+  <img src="image/grid-logo.svg" alt="A grid over the Rust logo" width="400px" height="400px">
+  <img src="image/grid.svg" alt="A single grid" width="400px" height="400px">
+</div>
+<p>Now we focus on a single cell in the original grid, and accurately copy it in
+the corresponding grid in the target grid. Going from top to bottom and from
+left to right, our first cell is empty. The second cell has a single tooth of
+the gear. Let's copy it over.</p>
+<div class="reference">
+  <img src="image/grid-logo.svg" alt="A grid over the Rust logo" width="400px" height="400px">
+  <img src="image/grid-logo-copy01.svg" alt="One cell copied of the Rust logo" width="400px" height="400px">
+</div>
+<p>The following cell has some more teeth.</p>
+<div class="reference">
+  <img src="image/grid-logo.svg" alt="A grid over the Rust logo" width="400px" height="400px">
+  <img src="image/grid-logo-copy02.svg" alt="Two cells copied of the Rust logo" width="400px" height="400px">
+</div>
+<p>By copying each cell one by one, the original logo is recreated.</p>
+<div class="reference">
+  <img src="image/grid-logo.svg" alt="A grid over the Rust logo" width="400px" height="400px">
+  <img src="image/grid-logo-copy03.svg" alt="Three cells copied of the Rust logo" width="400px" height="400px">
+</div>
+<p>until the original is completely copied.</p>
+<div class="reference">
+  <img src="image/grid-logo.svg" alt="A grid over the Rust logo" width="400px" height="400px">
+  <img src="image/grid-logo.svg" alt="The Rust logo copied by the grid method" width="400px" height="400px">
+</div>
+<a class="header" href="print.html#variations" id="variations"><h2>Variations</h2></a>
+<p>Once we understand the basics of the grid method, we can start to look for
+variations. Nobody is restricting you to draw the target grid differently.</p>
+<a class="header" href="print.html#scale" id="scale"><h3>Scale</h3></a>
+<p>We could scale the grid.</p>
+<div class="reference">
+  <img src="image/grid-logo.svg" alt="A grid over the Rust logo" width="400px" height="400px">
+  <img src="image/grid-logo-scaled.svg" alt="The Rust logo scaled by the grid method" width="400px" height="400px">
+</div>
+<a class="header" href="print.html#non-uniform-scale" id="non-uniform-scale"><h3>Non-uniform scale</h3></a>
+<p>We could scale the grid non-uniformly.</p>
+<div class="reference">
+  <img src="image/grid-logo.svg" alt="A grid over the Rust logo" width="400px" height="400px">
+  <img src="image/grid-logo-non-uniformly-scaled.svg" alt="The Rust logo scaled by the grid method" width="400px" height="400px">
+</div>
+<a class="header" href="print.html#shearing" id="shearing"><h3>Shearing</h3></a>
+<p>We could shear the grid.</p>
+<div class="reference">
+  <img src="image/grid-logo.svg" alt="A grid over the Rust logo" width="400px" height="400px">
+  <img src="image/grid-logo-shear.svg" alt="The Rust logo scaled by the grid method" width="400px" height="400px">
+</div>
+<a class="header" href="print.html#combination" id="combination"><h3>Combination</h3></a>
+<p>Or we could combine various transformation and apply that to the grid.</p>
+<div class="reference">
+  <img src="image/grid-logo.svg" alt="A grid over the Rust logo" width="400px" height="400px">
+  <img src="image/grid-logo-combination.svg" alt="The Rust logo scaled by the grid method" width="400px" height="400px">
+</div>
+<p>Because we will make extensive use of the grid method, and want to easily
+manipulate the grid, we will introduce a <em>box</em> abstraction.</p>
+<a class="header" href="print.html#box" id="box"><h1>Box</h1></a>
+<p>We learned about <em>the grid method</em>. It allows us to instruct an artist that
+knows how to copy a picture from a grid, how we want the picture copied. This can
+be achieved by controlling the grid the artist will copy the picture into. The
+grid method relies on a box. So we better should get to know our boxes.</p>
+<p><img src="image/box.svg" alt="The standard box for reference" width="400px" height="400px"></p>
+<p>Above you find a pictorial representation of a <em>box</em>. It is defined by three
+vectors, <code>a</code>, which is red in the picture, <code>b</code> which is orange in the picture
+and <code>c</code> which is purple in the picture.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+/// A Box represents the area and position that we will draw in.
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct Box {
+    /// Determines the origin of the drawing area, used to position the box.
+    pub a: Vector&lt;f64&gt;,
+    /// Determines the x axis of the box.
+    pub b: Vector&lt;f64&gt;,
+    /// Determines the y axis of the box.
+    pub c: Vector&lt;f64&gt;,
+}
+#}</code></pre></pre>
+<p>The above <code>struct</code> is a literal conversion from the picture. If you are
+wondering what these <code>Vector</code>s are, take a look at the
+<a href="doc/eschers/index.html">documentation</a>.</p>
+<a class="header" href="print.html#the-letter-d" id="the-letter-d"><h1>The letter d</h1></a>
+<p>You need to walk before you run. So instead of starting with drawing fish, we
+will take a look at the letter d.</p>
+<p><img src="image/d.svg" alt="The letter d" width="400px" height="400px"></p>
+<p>The letter d is a recognizable shape that does not have a lot of <em>symmetries</em>.
+I.e. If you rotate it or flip it, it doesn't look lite itself anymore. This
+isn't true for the letter H for example.</p>
+<p>By focusing on the letter d and transforming it, we can figure out how to change
+our box. This is hard work, but very rewarding.</p>
+<p>If you follow along and implement the functions laid out by the next chapters,
+you are well on your way to reproducing Eschers Square Limit.</p>
+<a class="header" href="print.html#turn" id="turn"><h1>Turn</h1></a>
+<p><img src="image/d_turned.svg" alt="The letter d turned" width="400px" height="400px"></p>
+<p>Our goal is to turn our letter through ninety degrees. As explained in the
+background chapter we are going to do this by rotating the box. This way the
+picture will be drawn turned automatically.</p>
+<p>Here we see our goal box on the right, and the reference box on the left. Let's
+figure out the relations between the new box fields <code>a</code>, <code>b</code> and <code>c</code> and the
+reference box fields <code>a</code>, <code>b</code>, <code>c</code>.</p>
+<div class="reference">
+  <img src="image/box.svg" alt="The standard box for reference" width="400px" height="400px">
+  <img src="image/box_turned.svg" alt="The standard box turned" width="400px" height="400px">
+</div>
+<p>Notice that for the target box the <code>a</code> field is the sum of the original box <code>a</code>
+and <code>b</code> field.</p>
+<p><img src="image/vector_sum.svg" alt="Vector sum of a and b" width="400px"
+height="400px"></p>
+<p>The new <code>b</code> is the original <code>c</code> and the new <code>c</code> is the original <code>b</code> negated.</p>
+<a class="header" href="print.html#implement" id="implement"><h2>Implement</h2></a>
+<p>Open <code>src/canvas/mod.rs</code> and find the <code>turn_box</code> function. At the moment it is
+implemented by calling the identity function on its argument</p>
+<pre><code>identity(&amp;bx)
+</code></pre>
+<p>We need to change that and return a turned box. <code>Box</code> has a constructor called
+<code>new</code>. When provided with three <code>Vector</code> arguments it will a create a box with
+the corresponding fields.</p>
+<p>Take a look at the documentation for <a href="doc/eschers/index.html"><code>Vector</code></a> in order
+to figure out how to do vector addition and vector negation.</p>
+<p>Having done that, try to implement the <code>turn_box</code> function correctly. You can
+test your function by running <code>geometry</code> binary.</p>
+<pre><code class="language-shell">cargo run --bin geometry
+</code></pre>
+<p>This should produce an <code>output.svg</code> and if you implemented <code>turn_box</code> correctly
+should show the letter d turned.</p>
+<a class="header" href="print.html#flip" id="flip"><h1>Flip</h1></a>
+<p><img src="image/d_flipped.svg" alt="The letter d flipped" width="400px" height="400px"></p>
+<p>Now our new goal is to flip our letter. Just as for the turned picture, we are
+going to do this by flipping the box. For the next few chapters this will be our
+goal; finding a target box.</p>
+<p>Again, we see our goal box on the right, and the reference box on the left. Let's
+figure out the relations between the new box fields <code>a</code>, <code>b</code> and <code>c</code> and the
+reference box fields <code>a</code>, <code>b</code>, <code>c</code>.</p>
+<div class="reference">
+  <img src="image/box.svg" alt="The standard box for reference" width="400px" height="400px">
+  <img src="image/box_flipped.svg" alt="The standard box flipped" width="400px" height="400px">
+</div>
+<p>Notice that for the target box the <code>a</code> field is again the sum of the original box <code>a</code>
+and <code>b</code> field.</p>
+<p><img src="image/vector_sum.svg" alt="Vector sum of a and b" width="400px"
+height="400px"></p>
+<p>The new <code>b</code> is the original <code>b</code> negated and the new <code>c</code> is the original <code>c</code>.</p>
+<a class="header" href="print.html#implement-1" id="implement-1"><h2>Implement</h2></a>
+<p>Open <code>src/canvas/mod.rs</code> and find the <code>flip_box</code> function. Just like the
+<code>turn_box</code> function before, it is implemented by calling the identity function
+on its argument</p>
+<pre><code>identity(&amp;bx)
+</code></pre>
+<p>We need to change that and return a flipped box. It is very is very similar to
+the <code>turn_box</code> function, so a good start is to copy that body and change it.</p>
+<p>Testing your function is a little bit more involved now. Early you could run
+<code>geometry</code> binary. Below you can find the <code>main</code> function of the <code>geometry</code>
+binary.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+let bx = Bx::new(
+    Vector::new(0f64, 0f64),
+    Vector::new(400f64, 0f64),
+    Vector::new(0f64, 400f64)
+);
+let shapes = letter::d();
+let source = create_picture(shapes);
+let picture = turn(source);
+let document = to_svg((400f64, 400f64), &amp;picture(&amp;bx));
+svg::save(&quot;output.svg&quot;, &amp;document).unwrap();
+#}</code></pre></pre>
+<p>The line to look out for is the <code>let picture</code> line. Here we call the function
+<code>turn</code> on our source shape. This function is found in the <code>picture</code> module. The
+<code>turn</code> function is reproduced here. It can be found in <code>src/picture/mod.rs</code>.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub fn turn&lt;Picture&gt;(picture: Rc&lt;Picture&gt;) -&gt; Rc&lt;impl Fn(&amp;Bx) -&gt; Rendering&gt;
+where Picture: Fn(&amp;Bx) -&gt; Rendering{
+    let p = picture.clone();
+    Rc::new(move |bx: &amp;Bx| {
+        let turned_box = turn_box(&amp;bx);
+        p(&amp;turned_box)
+    })
+}
+#}</code></pre></pre>
+<p>Whoah, look at that signature! It is wild! Take a deep breath, we will explain
+the signature in a moment. The important parts, the part that turns the picture
+is nicely tucked away.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+let turned_box = turn_box(&amp;bx);
+p(&amp;turned_box)
+#}</code></pre></pre>
+<p>Here we recognize our <code>turn_box</code> function, returning a <code>turned_box</code> which is
+passed as an argument to what ever <code>p</code> is.</p>
+<p>There is a lot going on besides that in the turn picture, but a lot of it is
+boilerplate. We will explain that shortly. For now just copy the body of the
+<code>turn</code> function, replace the body of the <code>flip</code> function with the copy and alter
+it to use your <code>flip_box</code> function instead.</p>
+<p>This takes care of the <code>flip</code> function, but it still needs to be called. Open
+the <code>geometry</code> binary and change the <code>let picture</code> to call <code>flip</code> instead of
+<code>turn</code> on the source.</p>
+<p>If every thing worked out just fine, you should be able to run <code>geomtry</code> with
+the following command</p>
+<pre><code class="language-shell">cargo run --bin geometry
+</code></pre>
+<p>and find a flipped letter d in <code>output.svg</code>.</p>
+<a class="header" href="print.html#picture" id="picture"><h1>Picture</h1></a>
+<p>In the last chapter we looked at the interesting signature of the <code>turn</code>
+function. We will repeated it here.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub fn turn&lt;Picture&gt;(picture: Rc&lt;Picture&gt;) -&gt; Rc&lt;impl Fn(&amp;Bx) -&gt; Rendering&gt;
+where Picture: Fn(&amp;Bx) -&gt; Rendering 
+#}</code></pre></pre>
+<p>There is a lot going on. There is even a piece of information missing. I.e.
+<code>Rendering</code> is a type alias.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub type Rendering = Vec&lt;(Shape, Style)&gt;;
+#}</code></pre></pre>
+<p>Let's take some time to think and see what this signature is all about.</p>
+<a class="header" href="print.html#shape--style" id="shape--style"><h2>Shape &amp; Style</h2></a>
+<p><code>Shape</code> are primitive drawing instructions. Various sort of lines and
+instructions and where to place them. If you are really curious you can take a look
+at the <a href="http://localhost:3000/doc/eschers/shape/enum.Shape.html">documentation</a>.</p>
+<p>The basic shapes are used to provide more abstract drawing instructions such as
+letters or grids.</p>
+<p><a href="http://localhost:3000/doc/eschers/style/struct.Style.html"><code>Style</code></a> instructs
+an artist with which style to draw the shapes.</p>
+<p>We will treat <code>Shape</code> and <code>Style</code>, and their derivatives, as black boxes. We
+will use them as is, without further inspection.</p>
+<a class="header" href="print.html#rendering" id="rendering"><h2>Rendering</h2></a>
+<p>Single stroke art is a thing, but in general art is made with more elements. A
+<code>Rendering</code> is just that, a sequences of shapes drawn with a certain style.</p>
+<p><code>Rendering</code> is a
+<a href="https://doc.rust-lang.org/book/second-edition/ch19-04-advanced-types.html#type-aliases-create-type-synonyms"><em>type alias</em></a>.
+It offers a nice shorthand for a type expression, but is otherwise
+interchangeable with the long form.</p>
+<p>Here is the definition</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub type Rendering = Vec&lt;(Shape, Style)&gt;;
+#}</code></pre></pre>
+<a class="header" href="print.html#picture-1" id="picture-1"><h2>Picture</h2></a>
+<p>Let's take a look at an other alias, this time defined in the signature of the
+<code>turn</code> function. For reference we repeat the definition below.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+where Picture: Fn(&amp;Bx) -&gt; Rendering
+#}</code></pre></pre>
+<p>A picture is a function that borrows a box, the one defined a few chapters back,
+and returns a <code>Rendering</code>, i.e. a sequence of shapes to draw.</p>
+<p>This is the most important abstraction that we will introduce. All following
+types are in place to make these abstraction usable and safe.</p>
+<a class="header" href="print.html#rc" id="rc"><h2>Rc</h2></a>
+<p>It you take a look at the type signature of <code>turn</code> you will notice that the
+<code>Picture</code> is wrapped in a <code>Rc</code>. It is a</p>
+<blockquote>
+<p>A single-threaded reference-counting pointer.</p>
+</blockquote>
+<p>As can be seen from the <a href="https://doc.rust-lang.org/std/rc/struct.Rc.html"><code>Rc</code> documentation</a>.</p>
+<p>The reason we need a reference counting pointer to the <code>Picture</code> here is
+two-fold.</p>
+<a class="header" href="print.html#picture-can-not-be-owned" id="picture-can-not-be-owned"><h3>Picture can not be owned</h3></a>
+<p>The first reason we need an reference counting pointer to the <code>Picture</code> is that
+we might want to reuse the picture. If you look back at Eschers square limit,
+you could see a lot of repetition in the image. As if a stamp is used to create
+the collage of fishes.</p>
+<p>This means that we can not take ownership of <code>Picture</code>, because otherwise other
+parts of our program can not reuse it.</p>
+<a class="header" href="print.html#picture-can-not-be-referenced" id="picture-can-not-be-referenced"><h3>Picture can not be referenced</h3></a>
+<p>Usually a possible solution to not owning data is to take a reference.
+Unfortunately, that is not an option here. It is a bit involved, but it has to
+do with <code>lifetimes</code>.</p>
+<p>In order for the Rust compiler to make some guarantees, the languages introduces
+lifetimes. The lifetimes of a piece of data is akin to a scope in which that
+data is valid.</p>
+<p>Often Rust infers the lifetime for you, sometimes it can't. We opted for the
+easy way out.</p>
+<a class="header" href="print.html#rc-to-the-rescue" id="rc-to-the-rescue"><h3>Rc to the rescue</h3></a>
+<p>Luckily, with a reference counting pointer, these problems go away. We do trade
+something for it. We can't use our program in a multi-threaded environment. We
+could if we really wanted, but for this workshop we are not really interested in
+multi-threading.</p>
+<p>The second is speed. Reference counting happens at run-time. This has a little
+overhead that we need to pay each time we run the program. This isn't a concern
+for us as well.</p>
+<a class="header" href="print.html#blackbox" id="blackbox"><h2>Blackbox</h2></a>
+<p>We have looked into the reason why <code>Picture</code> is defined as it is. With that
+knowledge under our belt, we continue with our goal. Recreating Eschers square
+limit.</p>
+<a class="header" href="print.html#toss" id="toss"><h1>Toss</h1></a>
+<p><img src="image/d_tossed.svg" alt="The letter d tossed" width="400px" height="400px"></p>
+<p>With the information about <code>Picture</code> in our mind, we toss ourselves on our new
+goal. We want to toss our letter d in the air. By now our method of operation is
+familiar. Define a tossed box and use it to define our <code>toss</code> function.</p>
+<div class="reference">
+  <img src="image/box.svg" alt="The standard box for reference" width="400px" height="400px">
+  <img src="image/box_tossed.svg" alt="The standard box tossed" width="400px" height="400px">
+</div>
+<p>Look at the reference box and the tossed box. Whoops, it draws outside of the
+boundary! Is that even allowed?</p>
+<p>Let's try to figure out the vectors for our tossed box. The new <code>a</code> vector is right
+between the the original <code>b</code> and <code>c</code> vectors. I.e. \(a' = a+\frac{b + c}{2}\).</p>
+<p>the new <code>b</code> vector is halve as large as the vector addition of <code>b</code> + <code>c</code>. I.e.
+\(b' = \frac{b + c}{2}\).</p>
+<p>The new <code>c</code> is halve as large as the vector from <code>b</code> that reaches <code>c</code>. I.e.
+\(c' = \frac{c - b}{2}\).</p>
+<a class="header" href="print.html#implement-2" id="implement-2"><h2>Implement</h2></a>
+<p>Having found the relations between the original box defining vectors and the
+tossed box its defining vector, we can proceed to implement it.</p>
+<p>Again in <code>src/canvas/mod.rs</code> you find a default implementation of <code>tossed_box</code>.
+Adopt it to reflect an actual tossed box.</p>
+<p>Then find the <code>toss</code> function in <code>src/picture/mod.rs</code> and use the freshly
+defined <code>tossed_box</code> function in its body.</p>
+<p>Next don't forget to change <code>geometry</code> binary to use the new <code>toss</code> function,
+execute it and marvel at the tossed letter d in <code>output.svg</code>.</p>
+<a class="header" href="print.html#above" id="above"><h1>Above</h1></a>
+<p><img src="image/d_above_b.svg" alt="The letter d & b above each other" width="400px" height="400px"></p>
+<p>The transformation that we are tackling next is to place one picture above an
+other. although in our example both pictures evenly divide the box between them,
+we are going to create a more versatile primitive and than use it to create the
+<code>above</code> function.</p>
+<div class="reference">
+  <img src="image/box.svg" alt="The standard box for reference" width="400px" height="400px">
+  <img src="image/box_above_box.svg" alt="Two boxes above each other" width="400px" height="400px">
+</div>
+<p>We are going to create a <code>split_box_horizontally</code> that takes a factor and a box
+and splits the box in two. So it return a pair of boxes. The factor determines
+how much the top box gets to occupy of the original box. The bottom box then
+will occupy <code>1.0 - factor</code>.</p>
+<a class="header" href="print.html#implement-3" id="implement-3"><h2>Implement</h2></a>
+<p>Head over to <code>src/canvas/mod.rs</code> and implement <code>split_box_horizontally</code>. It
+helped my to introduce helper functions <code>scale_box_horizontally</code> and
+<code>move_box_horizontally</code>.</p>
+<p>With this primitive open <code>src/picture/mod.rs</code> and define function <code>above_ratio</code>.
+This function accepts two pictures and two non-negative integers <code>m</code> and <code>n</code>. These integers are
+used to calculate how much of the pictures get to occupy of the original box.
+I.e. the top picture should occupy \(\frac{m}{m+n}\) of the original box.</p>
+<p>Go on and define <code>above</code> in terms of <code>above_ratio</code>. Then use it in
+<code>geometry.rs</code>. For above we need to provide two pictures. Remember that we can
+clone a picture to use it more than once. Find the correct combination of
+primitives to recreate the picture at the start of this chapter.</p>
+<a class="header" href="print.html#beside" id="beside"><h1>Beside</h1></a>
+<p><img src="image/d_beside_b.svg" alt="The letter d & b beside each other" width="400px" height="400px"></p>
+<p>What to do now is very similar what you did in the previous chapter. Instead of
+stacking pictures horizontally, you are going to &quot;stack&quot; them vertically.</p>
+<div class="reference">
+  <img src="image/box.svg" alt="The standard box for reference" width="400px" height="400px">
+  <img src="image/box_beside_box.svg" alt="Two boxes beside each other" width="400px" height="400px">
+</div>
+<a class="header" href="print.html#implement-4" id="implement-4"><h2>Implement</h2></a>
+<p>Copy and pasting and changing horizontally in vertically will bring this
+chapters goal within reach. And there is nothing wrong with that.</p>
+<p>But if you want to challenge yourself, you could also think of using the tools
+already present. By cleverly combining turns and above one can get beside.</p>
+<p>Either way, once you created beside, make sure to test it out. And say goodbye
+to <code>src/canvas/mod.rs</code>, you won't need to touch it again. All the primitive
+operations are in place.</p>
+<a class="header" href="print.html#quartet" id="quartet"><h1>quartet</h1></a>
+<p><img src="image/quartet_of_d.svg" alt="A quartet of transformed ds" width="400px" height="400px"></p>
+<p>A quartet of images, our next goal we will take on. As promised, we will not
+need to create a box this time. Instead, we our going to use the primitives we
+already created ourselves.</p>
+<p>Take some time and study the picture. How are the different parts related? Do
+any picture primitives spring to mind?</p>
+<a class="header" href="print.html#implementation" id="implementation"><h2>Implementation</h2></a>
+<p>Open <code>src/picture/mod.rs</code>. In it you will find the <code>quartet</code> function. Below is
+it's signature repeated.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub fn quartet&lt;P, Q, R, S&gt;(nw: Rc&lt;P&gt;, ne: Rc&lt;Q&gt;, sw: Rc&lt;R&gt;, se: Rc&lt;S&gt;) -&gt; Rc&lt;impl Fn(&amp;Bx) -&gt; Rendering&gt;
+where P: Fn(&amp;Bx) -&gt; Rendering, Q: Fn(&amp;Bx) -&gt; Rendering, R: Fn(&amp;Bx) -&gt; Rendering, S: Fn(&amp;Bx) -&gt; Rendering
+#}</code></pre></pre>
+<p>It is hard to look at. The reason for this is that Rust treats every closure as
+its own type. So even though the type parameters <code>P</code>, <code>Q</code>, <code>R</code> and <code>S</code> seem to
+be defined the same, at compile time they could be different.</p>
+<p>Either way, the implementation of the quartet should result in a <code>Rendering</code> of
+the arguments. They are called <code>nw</code>, <code>ne</code>, <code>sw</code> and <code>se</code> to help orient them in
+the quartet.</p>
+<p>When you find the right combination of picture primitives make sure to enjoy
+your hard-work and use it in the <code>geometry</code> binary.</p>
+<a class="header" href="print.html#nonet" id="nonet"><h1>nonet</h1></a>
+<p><img src="image/nonet_of_d.svg" alt="A nonet of transformed ds" width="400px" height="400px"></p>
+<p>What four is to quartet, nine is to nonet. This time we will arrange nine
+pictures in a nice grid. Again, this can be achieved with the primitives we
+defined our selves.</p>
+<p>Analyze the image and dream up a way to build it.</p>
+<a class="header" href="print.html#implementation-1" id="implementation-1"><h2>Implementation</h2></a>
+<p>If you don't like spoilers do not read any further. I am going to tell you how I
+approached the problem. I introduced to intermediate picture primitives, a
+column and a row. A column stacks three pictures atop each other, and row does
+the same, but puts them side by side. With these primitives nonet is defined
+with a few lines of code.</p>
+<p>If you have defined the nonet, go ahead and appreciate your hard work. Use it in
+the <code>geometry</code> binary and enjoy the marvelous nonet.</p>
+<a class="header" href="print.html#over" id="over"><h1>over</h1></a>
+<p><img src="image/d_over_b.svg" alt="The letter d over the tossed letter d" width="400px" height="400px"></p>
+<p>This is the last stop before we start drawing fishes. It feels a bit low-level
+in comparison to quartet and nonet, but we can still make it in the comfort of
+our <code>src/picture/mod.rs</code>.</p>
+<p>The image that we show is that of the letter d that is drawn over a tossed
+letter d. So our <code>over</code> function should take two pictures, draw one and draw the
+other in the same box.</p>
+<a class="header" href="print.html#implementation-2" id="implementation-2"><h2>Implementation.</h2></a>
+<p>Without giving the crux away, I would like to point out the definition of
+<code>Rendering</code> again.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub type Rendering = Vec&lt;(Shape, Style)&gt;;
+#}</code></pre></pre>
+<p>It is nothing more than a vector of shape &amp; style pairs. You can probably use
+that to your advantage. If you have a hard time figuring out this primitive,
+make sure to discuss it with your neighbor.</p>
+<p>Once you get the solution show your work to your discussion partner by using it
+in the <code>geometry</code> binary.</p>
+<a class="header" href="print.html#drawing-an-owl" id="drawing-an-owl"><h1>Drawing an Owl</h1></a>
+<p><img src="image/fish.svg" alt="Eschers famous fish" width="400px" height="400px"></p>
+<p>On the internet there is an image that explains how to draw an owl.</p>
+<p><img src="image/owl.jpg" alt="How to draw an owl"></p>
+<p>With the possibility of stating something similar I will give you the <code>fish</code>
+shape as a black box. I can imagine that you feel a bit disappointed. In my
+defense you should take a look at the definition of the fish.</p>
+<a class="header" href="print.html#implementation-3" id="implementation-3"><h2>Implementation</h2></a>
+<p>You can use the fish by using the right module.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+use eschers::shape::letter;
+#}</code></pre></pre>
+<p>and calling the appropriate function, which is aptly named <code>fish</code>.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+let shapes = escher::fish();
+#}</code></pre></pre>
+<p>With our fishing rod in hand and our picture primitives under our belt, we are
+ready to scale mount Escher. We will do that be defining some tiles and
+stitching them together in our final image.</p>
+<a class="header" href="print.html#ttile" id="ttile"><h1>ttile</h1></a>
+<p><img src="image/ttile.svg" alt="ttile of fish" width="400px" height="400px"></p>
+<p>Wow, don't the fish interlock nicely. In it Eschers brilliance shines through.
+He painstakingly experimented with shapes that have this interlocking
+properties, without losing the animal in the process.</p>
+<p>We can appreciate his hard work by puzzling ourselves. Which primitives recreate
+the ttile?</p>
+<a class="header" href="print.html#implementation-4" id="implementation-4"><h2>Implementation</h2></a>
+<p>With some effort the ttile can be defined succinctly. Quickly, use it in
+<code>geometry</code> binary.</p>
+<a class="header" href="print.html#utile" id="utile"><h1>utile</h1></a>
+<p><img src="image/utile.svg" alt="utile of fish" width="400px" height="400px"></p>
+<p>This fish just keeps on giving. The number of symmetries is has. The ways it can
+interlock. How many laments can you give to an artist?</p>
+<a class="header" href="print.html#implementation-5" id="implementation-5"><h2>Implementation</h2></a>
+<p>Your hard work will be appreciated.</p>
+<a class="header" href="print.html#side" id="side"><h1>side</h1></a>
+<p><img src="image/order_3_side.svg" alt="A order 3 side of fish" width="400px" height="400px"></p>
+<p>Beautiful. What you are looking at it the <em>order 3</em> side of fish. Escher Square
+Limit obviously is a finite picture, there are only so many fish one can draw.
+But it clearly hints at the image it wants to be. The infinite arrangement of
+fish we are working on to recreate.</p>
+<p>One way to do that is with recursion. It can be hard to literally see how, so I
+will draw your attention to some of the finer details.</p>
+<p><img src="image/order_3_side_grid.svg" alt="A order 3 side of fish in a grid" width="400px" height="400px"></p>
+<p>At the bottom squares you could recognize the ttile of fish we created moments
+ago. And in the bottom squares. Wait a minute, that is our side that we are
+creating, only with one level less.</p>
+<a class="header" href="print.html#implementation-6" id="implementation-6"><h2>Implementation</h2></a>
+<p>Find the appropriate primitives and connect them in the right way to create a
+recursive side.</p>
+<a class="header" href="print.html#corner" id="corner"><h1>corner</h1></a>
+<p><img src="image/order_3_corner.svg" alt="Order 3 corner of fish" width="400px" height="400px"></p>
+<p>We have just created a recursive side so the recursion is strong in us. The
+corner in her turn is recursive as well. Lets focus our eye on some of the
+details.</p>
+<p><img src="image/order_3_corner_grid.svg" alt="Order 3 corner of fish in a grid" width="400px" height="400px"></p>
+<p>In the bottom right corner a utile can be recognized. The top right is our
+friend side. The bottom left is also a side, but now turned and the recursion
+starts in the top left, where we find our own corner but of a lesser order.</p>
+<a class="header" href="print.html#implementation-7" id="implementation-7"><h2>Implementation</h2></a>
+<p>Go on young artist, Eschers Square limit is awaiting us.</p>
+<a class="header" href="print.html#square_limit" id="square_limit"><h1>square_limit</h1></a>
+<p><img src="image/order_3_square_limit.svg" alt="A order 3 square limit of fish" width="400px" height="400px"></p>
+<p>This is it. The final stage of our long quest. You now what to do. You have the tools in your possession. A final glimpse into the structure of the image is all we need.</p>
+<p><img src="image/order_3_square_limit_grid.svg" alt="A order 3 square limit of fish in a grid" width="400px" height="400px"></p>
+<a class="header" href="print.html#implementation-8" id="implementation-8"><h2>Implementation</h2></a>
+<p>It is a bit of a puzzle, but you will get there.</p>
+<a class="header" href="print.html#farewell" id="farewell"><h1>Farewell</h1></a>
+<p>Like all good things, this workshop draws to a close. I hope you enjoyed your self, appreciated the art that you created and learned something along the way.</p>
+<a class="header" href="print.html#feedback" id="feedback"><h2>Feedback</h2></a>
+<p>Feel free to come talk to me and express how you experienced the workshop. If you have any improvements please checkout the <a href="https://github.com/fifth-postulate/esche.rs">repository</a>, file an issue or provide a pull-request.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+
+                
+            </nav>
+
+        </div>
+
+
+        <!-- Local fallback for Font Awesome -->
+        <script>
+            if (getComputedStyle(document.querySelector(".fa")).fontFamily !== "FontAwesome") {
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                link.href = '_FontAwesome/css/font-awesome.css';
+                document.head.insertBefore(link, document.head.firstChild)
+            }
+        </script>
+
+        
+
+        
+
+        
+
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                window.print();
+            })
+        </script>
+        
+
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS script -->
+        
+
+    </body>
+</html>

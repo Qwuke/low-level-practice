@@ -1,0 +1,282 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Picture - Esche.rs</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="A book accompanying a workshop to recreate Escher's square limit.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <base href="">
+
+        <link rel="stylesheet" href="book.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <link rel="shortcut icon" href="favicon.png">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme -->
+        
+        <link rel="stylesheet" href="geometry.css">
+        
+
+        
+        <!-- MathJax -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        
+
+        <!-- Fetch Clipboard.js from CDN but have a local fallback -->
+        <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.1/clipboard.min.js"></script>
+        <script>
+            if (typeof Clipboard == 'undefined') {
+                document.write(unescape("%3Cscript src='clipboard.min.js'%3E%3C/script%3E"));
+            }
+        </script>
+
+    </head>
+    <body class="light">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme;
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            document.querySelector('html').classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li class="affix"><a href="title.html">Title</a></li><li class="affix"><a href="motivation.html">Motivation</a></li><li class="affix"><a href="documentation.html">Documentation</a></li><li class="affix"><a href="grid.html">Grid method</a></li><li class="affix"><a href="box.html">Box</a></li><li class="affix"><a href="start.html">The letter d</a></li><li><a href="turn.html"><strong aria-hidden="true">1.</strong> turn</a></li><li><a href="flip.html"><strong aria-hidden="true">2.</strong> flip</a></li><li><a href="picture.html" class="active"><strong aria-hidden="true">3.</strong> Picture</a></li><li><a href="toss.html"><strong aria-hidden="true">4.</strong> toss</a></li><li><a href="above.html"><strong aria-hidden="true">5.</strong> above</a></li><li><a href="beside.html"><strong aria-hidden="true">6.</strong> beside</a></li><li><a href="quartet.html"><strong aria-hidden="true">7.</strong> quartet</a></li><li><a href="nonet.html"><strong aria-hidden="true">8.</strong> nonet</a></li><li><a href="over.html"><strong aria-hidden="true">9.</strong> over</a></li><li><a href="owl.html"><strong aria-hidden="true">10.</strong> owl</a></li><li><a href="ttile.html"><strong aria-hidden="true">11.</strong> ttile</a></li><li><a href="utile.html"><strong aria-hidden="true">12.</strong> utile</a></li><li><a href="side.html"><strong aria-hidden="true">13.</strong> side</a></li><li><a href="corner.html"><strong aria-hidden="true">14.</strong> corner</a></li><li><a href="square_limit.html"><strong aria-hidden="true">15.</strong> square_limit</a></li><li><a href="farewell.html"><strong aria-hidden="true">16.</strong> Farewell</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="submenu">
+                                <li><button class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li><button class="theme" id="rust">Rust</button></li>
+                                <li><button class="theme" id="coal">Coal</button></li>
+                                <li><button class="theme" id="navy">Navy</button></li>
+                                <li><button class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                        </div>
+
+                        <h1 class="menu-title">Esche.rs</h1>
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="picture.html#picture" id="picture"><h1>Picture</h1></a>
+<p>In the last chapter we looked at the interesting signature of the <code>turn</code>
+function. We will repeated it here.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub fn turn&lt;Picture&gt;(picture: Rc&lt;Picture&gt;) -&gt; Rc&lt;impl Fn(&amp;Bx) -&gt; Rendering&gt;
+where Picture: Fn(&amp;Bx) -&gt; Rendering 
+#}</code></pre></pre>
+<p>There is a lot going on. There is even a piece of information missing. I.e.
+<code>Rendering</code> is a type alias.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub type Rendering = Vec&lt;(Shape, Style)&gt;;
+#}</code></pre></pre>
+<p>Let's take some time to think and see what this signature is all about.</p>
+<a class="header" href="picture.html#shape--style" id="shape--style"><h2>Shape &amp; Style</h2></a>
+<p><code>Shape</code> are primitive drawing instructions. Various sort of lines and
+instructions and where to place them. If you are really curious you can take a look
+at the <a href="http://localhost:3000/doc/eschers/shape/enum.Shape.html">documentation</a>.</p>
+<p>The basic shapes are used to provide more abstract drawing instructions such as
+letters or grids.</p>
+<p><a href="http://localhost:3000/doc/eschers/style/struct.Style.html"><code>Style</code></a> instructs
+an artist with which style to draw the shapes.</p>
+<p>We will treat <code>Shape</code> and <code>Style</code>, and their derivatives, as black boxes. We
+will use them as is, without further inspection.</p>
+<a class="header" href="picture.html#rendering" id="rendering"><h2>Rendering</h2></a>
+<p>Single stroke art is a thing, but in general art is made with more elements. A
+<code>Rendering</code> is just that, a sequences of shapes drawn with a certain style.</p>
+<p><code>Rendering</code> is a
+<a href="https://doc.rust-lang.org/book/second-edition/ch19-04-advanced-types.html#type-aliases-create-type-synonyms"><em>type alias</em></a>.
+It offers a nice shorthand for a type expression, but is otherwise
+interchangeable with the long form.</p>
+<p>Here is the definition</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub type Rendering = Vec&lt;(Shape, Style)&gt;;
+#}</code></pre></pre>
+<a class="header" href="picture.html#picture-1" id="picture-1"><h2>Picture</h2></a>
+<p>Let's take a look at an other alias, this time defined in the signature of the
+<code>turn</code> function. For reference we repeat the definition below.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+where Picture: Fn(&amp;Bx) -&gt; Rendering
+#}</code></pre></pre>
+<p>A picture is a function that borrows a box, the one defined a few chapters back,
+and returns a <code>Rendering</code>, i.e. a sequence of shapes to draw.</p>
+<p>This is the most important abstraction that we will introduce. All following
+types are in place to make these abstraction usable and safe.</p>
+<a class="header" href="picture.html#rc" id="rc"><h2>Rc</h2></a>
+<p>It you take a look at the type signature of <code>turn</code> you will notice that the
+<code>Picture</code> is wrapped in a <code>Rc</code>. It is a</p>
+<blockquote>
+<p>A single-threaded reference-counting pointer.</p>
+</blockquote>
+<p>As can be seen from the <a href="https://doc.rust-lang.org/std/rc/struct.Rc.html"><code>Rc</code> documentation</a>.</p>
+<p>The reason we need a reference counting pointer to the <code>Picture</code> here is
+two-fold.</p>
+<a class="header" href="picture.html#picture-can-not-be-owned" id="picture-can-not-be-owned"><h3>Picture can not be owned</h3></a>
+<p>The first reason we need an reference counting pointer to the <code>Picture</code> is that
+we might want to reuse the picture. If you look back at Eschers square limit,
+you could see a lot of repetition in the image. As if a stamp is used to create
+the collage of fishes.</p>
+<p>This means that we can not take ownership of <code>Picture</code>, because otherwise other
+parts of our program can not reuse it.</p>
+<a class="header" href="picture.html#picture-can-not-be-referenced" id="picture-can-not-be-referenced"><h3>Picture can not be referenced</h3></a>
+<p>Usually a possible solution to not owning data is to take a reference.
+Unfortunately, that is not an option here. It is a bit involved, but it has to
+do with <code>lifetimes</code>.</p>
+<p>In order for the Rust compiler to make some guarantees, the languages introduces
+lifetimes. The lifetimes of a piece of data is akin to a scope in which that
+data is valid.</p>
+<p>Often Rust infers the lifetime for you, sometimes it can't. We opted for the
+easy way out.</p>
+<a class="header" href="picture.html#rc-to-the-rescue" id="rc-to-the-rescue"><h3>Rc to the rescue</h3></a>
+<p>Luckily, with a reference counting pointer, these problems go away. We do trade
+something for it. We can't use our program in a multi-threaded environment. We
+could if we really wanted, but for this workshop we are not really interested in
+multi-threading.</p>
+<p>The second is speed. Reference counting happens at run-time. This has a little
+overhead that we need to pay each time we run the program. This isn't a concern
+for us as well.</p>
+<a class="header" href="picture.html#blackbox" id="blackbox"><h2>Blackbox</h2></a>
+<p>We have looked into the reason why <code>Picture</code> is defined as it is. With that
+knowledge under our belt, we continue with our goal. Recreating Eschers square
+limit.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="flip.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="toss.html" class="mobile-nav-chapters next" title="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="flip.html" class="nav-chapters previous" title="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="toss.html" class="nav-chapters next" title="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+
+        <!-- Local fallback for Font Awesome -->
+        <script>
+            if (getComputedStyle(document.querySelector(".fa")).fontFamily !== "FontAwesome") {
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                link.href = '_FontAwesome/css/font-awesome.css';
+                document.head.insertBefore(link, document.head.firstChild)
+            }
+        </script>
+
+        
+
+        
+
+        
+
+        
+
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS script -->
+        
+
+    </body>
+</html>
