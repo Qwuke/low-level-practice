@@ -1,0 +1,226 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>turn - Esche.rs</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="A book accompanying a workshop to recreate Escher's square limit.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <base href="">
+
+        <link rel="stylesheet" href="book.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <link rel="shortcut icon" href="favicon.png">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme -->
+        
+        <link rel="stylesheet" href="geometry.css">
+        
+
+        
+        <!-- MathJax -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        
+
+        <!-- Fetch Clipboard.js from CDN but have a local fallback -->
+        <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.1/clipboard.min.js"></script>
+        <script>
+            if (typeof Clipboard == 'undefined') {
+                document.write(unescape("%3Cscript src='clipboard.min.js'%3E%3C/script%3E"));
+            }
+        </script>
+
+    </head>
+    <body class="light">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme;
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            document.querySelector('html').classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li class="affix"><a href="title.html">Title</a></li><li class="affix"><a href="motivation.html">Motivation</a></li><li class="affix"><a href="documentation.html">Documentation</a></li><li class="affix"><a href="grid.html">Grid method</a></li><li class="affix"><a href="box.html">Box</a></li><li class="affix"><a href="start.html">The letter d</a></li><li><a href="turn.html" class="active"><strong aria-hidden="true">1.</strong> turn</a></li><li><a href="flip.html"><strong aria-hidden="true">2.</strong> flip</a></li><li><a href="picture.html"><strong aria-hidden="true">3.</strong> Picture</a></li><li><a href="toss.html"><strong aria-hidden="true">4.</strong> toss</a></li><li><a href="above.html"><strong aria-hidden="true">5.</strong> above</a></li><li><a href="beside.html"><strong aria-hidden="true">6.</strong> beside</a></li><li><a href="quartet.html"><strong aria-hidden="true">7.</strong> quartet</a></li><li><a href="nonet.html"><strong aria-hidden="true">8.</strong> nonet</a></li><li><a href="over.html"><strong aria-hidden="true">9.</strong> over</a></li><li><a href="owl.html"><strong aria-hidden="true">10.</strong> owl</a></li><li><a href="ttile.html"><strong aria-hidden="true">11.</strong> ttile</a></li><li><a href="utile.html"><strong aria-hidden="true">12.</strong> utile</a></li><li><a href="side.html"><strong aria-hidden="true">13.</strong> side</a></li><li><a href="corner.html"><strong aria-hidden="true">14.</strong> corner</a></li><li><a href="square_limit.html"><strong aria-hidden="true">15.</strong> square_limit</a></li><li><a href="farewell.html"><strong aria-hidden="true">16.</strong> Farewell</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="submenu">
+                                <li><button class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li><button class="theme" id="rust">Rust</button></li>
+                                <li><button class="theme" id="coal">Coal</button></li>
+                                <li><button class="theme" id="navy">Navy</button></li>
+                                <li><button class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                        </div>
+
+                        <h1 class="menu-title">Esche.rs</h1>
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="turn.html#turn" id="turn"><h1>Turn</h1></a>
+<p><img src="image/d_turned.svg" alt="The letter d turned" width="400px" height="400px"></p>
+<p>Our goal is to turn our letter through ninety degrees. As explained in the
+background chapter we are going to do this by rotating the box. This way the
+picture will be drawn turned automatically.</p>
+<p>Here we see our goal box on the right, and the reference box on the left. Let's
+figure out the relations between the new box fields <code>a</code>, <code>b</code> and <code>c</code> and the
+reference box fields <code>a</code>, <code>b</code>, <code>c</code>.</p>
+<div class="reference">
+  <img src="image/box.svg" alt="The standard box for reference" width="400px" height="400px">
+  <img src="image/box_turned.svg" alt="The standard box turned" width="400px" height="400px">
+</div>
+<p>Notice that for the target box the <code>a</code> field is the sum of the original box <code>a</code>
+and <code>b</code> field.</p>
+<p><img src="image/vector_sum.svg" alt="Vector sum of a and b" width="400px"
+height="400px"></p>
+<p>The new <code>b</code> is the original <code>c</code> and the new <code>c</code> is the original <code>b</code> negated.</p>
+<a class="header" href="turn.html#implement" id="implement"><h2>Implement</h2></a>
+<p>Open <code>src/canvas/mod.rs</code> and find the <code>turn_box</code> function. At the moment it is
+implemented by calling the identity function on its argument</p>
+<pre><code>identity(&amp;bx)
+</code></pre>
+<p>We need to change that and return a turned box. <code>Box</code> has a constructor called
+<code>new</code>. When provided with three <code>Vector</code> arguments it will a create a box with
+the corresponding fields.</p>
+<p>Take a look at the documentation for <a href="doc/eschers/index.html"><code>Vector</code></a> in order
+to figure out how to do vector addition and vector negation.</p>
+<p>Having done that, try to implement the <code>turn_box</code> function correctly. You can
+test your function by running <code>geometry</code> binary.</p>
+<pre><code class="language-shell">cargo run --bin geometry
+</code></pre>
+<p>This should produce an <code>output.svg</code> and if you implemented <code>turn_box</code> correctly
+should show the letter d turned.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="start.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="flip.html" class="mobile-nav-chapters next" title="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="start.html" class="nav-chapters previous" title="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="flip.html" class="nav-chapters next" title="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+
+        <!-- Local fallback for Font Awesome -->
+        <script>
+            if (getComputedStyle(document.querySelector(".fa")).fontFamily !== "FontAwesome") {
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                link.href = '_FontAwesome/css/font-awesome.css';
+                document.head.insertBefore(link, document.head.firstChild)
+            }
+        </script>
+
+        
+
+        
+
+        
+
+        
+
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS script -->
+        
+
+    </body>
+</html>
